@@ -10,6 +10,11 @@
 
 
 MODULE_LICENSE("GPL");
+
+#define SUCCESS 0
+#define DEVICE_RANGE_NAME "char_dev"
+#define BUF_LEN 128
+#define DEVICE_FILE_NAME "simple_char_dev"
 #define MAJOR_NUM 235
 
 struct chardev_info {

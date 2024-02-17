@@ -1,9 +1,5 @@
 #include "chardev.h"
 
-#define SUCCESS 0
-#define DEVICE_RANGE_NAME "char_dev"
-#define BUF_LEN 128
-#define DEVICE_FILE_NAME "simple_char_dev"
 
 // used to prevent concurent access into the same device
 static int dev_open_flag = 0;
