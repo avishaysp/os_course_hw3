@@ -14,6 +14,7 @@ MODULE_LICENSE("GPL");
 
 struct chardev_info {
   spinlock_t lock;
+  int minor;
 };
 
 // Set the message of the device driver

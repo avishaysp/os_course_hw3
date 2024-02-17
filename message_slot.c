@@ -7,6 +7,7 @@
 
 // used to prevent concurent access into the same device
 static int dev_open_flag = 0;
+static chardev_info* devices = NULL;
 
 static struct chardev_info device_info;
 
