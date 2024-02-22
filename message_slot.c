@@ -21,11 +21,12 @@ static int device_open( struct inode* inode,
 static int device_release( struct inode* inode,
                            struct file*  file)
 {
+    u32 i;
     printk("Invoking device_release(%p,%p)\n", inode, file);
     if (device_msg_channels == NULL) {
         return SUCCESS;
     }
-    for (u32 i = 0; i < num_of_msg_channels; i++) {
+    for (i = 0; i < num_of_msg_channels; i++) {
         kfree(device_msg_channels[i]);
     }
     kfree(device_msg_channels);
@@ -64,8 +65,8 @@ static ssize_t device_write( struct file*       file,
                              size_t             length,
                              loff_t*            offset)
 {
+    ssize_t i;
     printk("Invoking device_write(%p,%ld)\n", file, length);
-
     if (device_msg_channels == NULL) {
         errno = EINVAL;
         return -1;
@@ -74,7 +75,6 @@ static ssize_t device_write( struct file*       file,
         errno = EMSGSIZE;
         return -1;
     }
-    ssize_t i;
     for(i = 0; i < length; ++i) {
         int ret;
         if(ret = get_user(current_msg_channel->msg[i], &buffer[i])) {
@@ -87,7 +87,8 @@ static ssize_t device_write( struct file*       file,
 }
 
 static msg_channel_t* msg_channel_of(u64 requested_msg_channel_id) {
-    for (int i = 0; i < num_of_msg_channels; i++) {
+    int i;
+    for (i = 0; i < num_of_msg_channels; i++) {
         if (device_msg_channels[i]->id == requested_msg_channel_id) {
              // the requested msg channel exists, his index is i
             return device_msg_channels[i];
@@ -97,7 +98,7 @@ static msg_channel_t* msg_channel_of(u64 requested_msg_channel_id) {
 }
 
 static msg_channel_t* create_channel_if_needed_of(u64 requested_msg_channel_id) {
-
+    msg_channel_t* found_msg_channel;
     // First case: it is our first ioctl
     if (device_msg_channels == NULL) {
         // set device_msg_channels to be an array of pointers. device_msg_channels[0] will be our current msg slot
@@ -116,7 +117,7 @@ static msg_channel_t* create_channel_if_needed_of(u64 requested_msg_channel_id) 
         return device_msg_channels[0];
     }
     // We know that there where channels in use. Check if msg channel already exists
-    msg_channel_t* found_msg_channel = msg_channel_of(requested_msg_channel_id);
+    found_msg_channel = msg_channel_of(requested_msg_channel_id);
     if (found_msg_channel) {
         return found_msg_channel;
     }
