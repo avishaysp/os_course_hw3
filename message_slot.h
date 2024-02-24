@@ -20,7 +20,7 @@ MODULE_LICENSE("GPL");
 #define BUF_LEN 128
 #define DEVICE_FILE_NAME "simple_char_dev"
 #define MAJOR_NUM 235
-#define IOCTL_SET_ENC _IOW(MAJOR_NUM, 0, unsigned long)
+#define MSG_SLOT_CHANNEL _IOW(MAJOR_NUM, 0, unsigned long)
 #define SUCCESS 0
 #define FAIL 0
 
