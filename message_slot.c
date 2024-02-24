@@ -66,6 +66,7 @@ static ssize_t device_write( struct file*       file,
                              loff_t*            offset)
 {
     ssize_t i;
+    int ret;
     printk("Invoking device_write(%p,%ld)\n", file, length);
     if (device_msg_channels == NULL) {
         errno = EINVAL;
@@ -76,7 +77,6 @@ static ssize_t device_write( struct file*       file,
         return -1;
     }
     for(i = 0; i < length; ++i) {
-        int ret;
         if(ret = get_user(current_msg_channel->msg[i], &buffer[i])) {
             errno = -ret;  // Convert to a positive value
             return -1;
@@ -173,9 +173,6 @@ struct file_operations Fops = {
 static int __init simple_init(void)
 {
     int rc = -1;
-    // init dev struct
-    memset( &device_info, 0, sizeof(struct chardev_info) );
-    spin_lock_init(&device_info.lock);
 
     // Register driver capabilities. Obtain major num
     rc = register_chrdev(MAJOR_NUM, DEVICE_RANGE_NAME, &Fops);
