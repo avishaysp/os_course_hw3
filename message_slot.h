@@ -22,7 +22,7 @@ MODULE_LICENSE("GPL");
 #define MAJOR_NUM 235
 #define MSG_SLOT_CHANNEL _IOW(MAJOR_NUM, 0, unsigned long)
 #define SUCCESS 0
-#define FAIL 0
+#define FAIL -1
 
 typedef struct msg_channel_t {
   u64 id;  // we will go with 64 bits beacuse ioctl get a losg as a param. Doesn't cost much relative to the 128 chars of the msg
