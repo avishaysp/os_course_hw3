@@ -41,19 +41,19 @@ static ssize_t device_read( struct file* file,
                             loff_t*      offset )
 {
     if (current_msg_channel == NULL) {
-        errno = EINVAL;
+        // errno = EINVAL;
         return -1;
     }
     if (!current_msg_channel->num_of_used_bytes) {
-        errno = EWOULDBLOCK;
+        // errno = EWOULDBLOCK;
         return -1;
     }
     if (current_msg_channel->num_of_used_bytes > length) {
-        errno = ENOSPC;
+        // errno = ENOSPC;
         return -1;
     }
     if (copy_to_user(buffer, current_msg_channel->msg, current_msg_channel->num_of_used_bytes)) {
-        errno = EFAULT;
+        // errno = EFAULT;
         return -1;
     }
     return current_msg_channel->num_of_used_bytes;
@@ -69,16 +69,17 @@ static ssize_t device_write( struct file*       file,
     int ret;
     printk("Invoking device_write(%p,%ld)\n", file, length);
     if (device_msg_channels == NULL) {
-        errno = EINVAL;
+        // errno = EINVAL;
         return -1;
     }
     if (!length || length > BUF_LEN) {
-        errno = EMSGSIZE;
+        // errno = EMSGSIZE;
         return -1;
     }
     for(i = 0; i < length; ++i) {
-        if(ret = get_user(current_msg_channel->msg[i], &buffer[i])) {
-            errno = -ret;  // Convert to a positive value
+        ret = get_user(current_msg_channel->msg[i], &buffer[i]);
+        if(ret) {
+            // errno = -ret;  // Convert to a positive value
             return -1;
         }
     }
@@ -147,7 +148,7 @@ static long device_ioctl( struct   file* file,
 {
     // Switch according to the ioctl called
     if(ioctl_command_id != MSG_SLOT_CHANNEL || !ioctl_param /* Cannot be 0 */) {
-        errno = EINVAL;
+        // errno = EINVAL;
         return -1;
     }
     // Get the parameter given to ioctl by the process
@@ -182,7 +183,7 @@ static int __init simple_init(void)
         printk(KERN_ALERT "%s registraion failed for  %d\n", DEVICE_FILE_NAME, MAJOR_NUM);
         return rc;
     }
-
+    printk("registration worked!\n");
     return 0;
 }
 
