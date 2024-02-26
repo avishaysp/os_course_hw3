@@ -1,3 +1,12 @@
+// Declare what kind of code we want
+// from the header files. Defining __KERNEL__
+// and MODULE allows us to access kernel-level
+// code not usually available to userspace programs.
+#undef __KERNEL__
+#define __KERNEL__
+#undef MODULE
+#define MODULE
+
 #include "message_slot.h"
 
 static msg_channel_t** device_msg_channels;     // pointer to array of pointer to msg_slots
