@@ -1,4 +1,5 @@
 #include "message_slot.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
