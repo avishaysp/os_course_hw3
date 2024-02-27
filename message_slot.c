@@ -20,7 +20,6 @@ static int device_open( struct inode* inode,
                         struct file*  file )
 {
     printk("MSG SLOT: Invoking device_open(%p)\n", file);
-    printk("MSG SLOT: \n")
     return SUCCESS;
 }
 

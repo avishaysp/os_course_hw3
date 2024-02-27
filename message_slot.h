@@ -10,7 +10,6 @@
     #include <linux/errno.h>  // For error codes
     #include <linux/err.h>    // For PTR_ERR and IS_ERR
     #include <linux/slab.h>   // Include this for kmalloc, kzalloc, and krealloc
-    #include <linux/types.h>  // For kernel mode types
 
 
     MODULE_LICENSE("GPL");
