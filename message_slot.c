@@ -99,7 +99,7 @@ static ssize_t device_write( struct file*       file,
     }
     current_msg_channel->
     current_msg_channel->num_of_used_bytes = i;
-    printk("MSG SLOT: Successfully wrote %ld bytes to device\n", i);
+    printk("MSG SLOT: Successfully wrote %ld bytes to device.\n", i);
     // return the number of input characters succeeded
     return i;
 }
