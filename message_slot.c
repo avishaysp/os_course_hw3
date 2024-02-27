@@ -92,6 +92,7 @@ static ssize_t device_write( struct file*       file,
             return -1;
         }
     }
+    printk("Successfully wrote %ld bytes to device\n", i);
     // return the number of input characters succeeded
     return i;
 }
