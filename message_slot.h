@@ -16,8 +16,8 @@
     MODULE_LICENSE("GPL");
 
     typedef struct msg_channel_t {
-        u64 id;  // we will go with 64 bits beacuse ioctl get a long as a param. Doesn't cost much relative to the 128 chars of the msg
-        u8 num_of_used_bytes;
+        unsigned long id;  // we will go with 64 bits beacuse ioctl get a long as a param. Doesn't cost much relative to the 128 chars of the msg
+        char num_of_used_bytes;
         char msg[BUF_LEN];
     }msg_channel_t;
 
