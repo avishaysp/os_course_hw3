@@ -76,7 +76,7 @@ static ssize_t device_write( struct file*       file,
 {
     ssize_t i;
     int ret;
-    printk("Invoking device_write(%p ,%ld, %s)\n", file, length, buffer);
+    printk("Invoking device_write(%p ,%ld)\n", file, length);
     if (device_msg_channels == NULL) {
         // errno = EINVAL;
         return -1;
