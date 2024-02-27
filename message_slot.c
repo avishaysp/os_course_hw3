@@ -10,7 +10,7 @@
 #include "message_slot.h"
 
 static msg_channel_t** device_msg_channels;     // pointer to array of pointer to msg_slots
-static u32 num_of_msg_channels;            // number of msg channels
+static unsigned int num_of_msg_channels;        // number of msg channels
 static msg_channel_t* current_msg_channel;      // the pointer to our current msg slot
                                                 // Invariant: if current_msg_channel == NULL => device_msg_channels == NULL
 
@@ -20,6 +20,7 @@ static int device_open( struct inode* inode,
                         struct file*  file )
 {
     printk("MSG SLOT: Invoking device_open(%p)\n", file);
+    printk("MSG SLOT: \n")
     return SUCCESS;
 }
 
@@ -27,16 +28,7 @@ static int device_open( struct inode* inode,
 static int device_release( struct inode* inode,
                            struct file*  file)
 {
-    u32 i;
     printk("MSG SLOT: Invoking device_release(%p,%p)\n", inode, file);
-    if (device_msg_channels == NULL) {
-        return SUCCESS;
-    }
-    for (i = 0; i < num_of_msg_channels; i++) {
-        kfree(device_msg_channels[i]);
-    }
-    kfree(device_msg_channels);
-
     return SUCCESS;
 }
 
