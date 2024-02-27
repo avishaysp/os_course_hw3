@@ -22,18 +22,18 @@ int main(int argc, char *argv[]) {
 
     int fd = open(msg_slot_path, O_RDWR);
     if (fd < 0) {
-        perror("open device file failure");
+        perror("user open device file failure");
         exit(1);
     }
     int ret = ioctl(fd, MSG_SLOT_CHANNEL, target_channel_id);
     if (ret == -1) {
-        perror("device ioctl failure");
+        perror("user device ioctl failure");
         exit(1);
     }
     char buffer[BUF_LEN];
     ret = read(fd, buffer, BUF_LEN);
-        if (ret == -1) {
-        perror("device read failure");
+    if (ret == -1) {
+        perror("user device read failure");
         exit(1);
     }
     printf("%s", buffer);

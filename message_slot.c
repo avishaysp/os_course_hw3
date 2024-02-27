@@ -51,19 +51,19 @@ static ssize_t device_read( struct file* file,
 {
     if (current_msg_channel == NULL) {
         // errno = EINVAL;
-        return -1;
+        return -2;
     }
     if (!current_msg_channel->num_of_used_bytes) {
         // errno = EWOULDBLOCK;
-        return -1;
+        return -2;
     }
     if (current_msg_channel->num_of_used_bytes > length) {
         // errno = ENOSPC;
-        return -1;
+        return -2;
     }
     if (copy_to_user(buffer, current_msg_channel->msg, current_msg_channel->num_of_used_bytes)) {
         // errno = EFAULT;
-        return -1;
+        return -2;
     }
     return current_msg_channel->num_of_used_bytes;
 }
@@ -85,7 +85,7 @@ static ssize_t device_write( struct file*       file,
         // errno = EMSGSIZE;
         return -1;
     }
-    for(i = 0; i < length; ++i) {
+    for(i = 0; i < length; i++) {
         ret = get_user(current_msg_channel->msg[i], &buffer[i]);
         if(ret) {
             // errno = -ret;  // Convert to a positive value

@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
         perror("device ioctl failure");
         exit(1);
     }
-    ret = write(fd, curr_msg, strlen(curr_msg) - 1);
+    ret = write(fd, curr_msg, strlen(curr_msg));
         if (ret == -1) {
         perror("device write failure");
         exit(1);
