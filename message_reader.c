@@ -26,13 +26,13 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     int ret = ioctl(fd, MSG_SLOT_CHANNEL, target_channel_id);
-    if (ret == -1) {
+    if (ret < 0) {
         perror("user device ioctl failure");
         exit(1);
     }
     char buffer[BUF_LEN];
     ret = read(fd, buffer, BUF_LEN);
-    if (ret == -1) {
+    if (ret < 0) {
         perror("user device read failure");
         exit(1);
     }

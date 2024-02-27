@@ -31,7 +31,7 @@ static int device_release( struct inode* inode,
                            struct file*  file)
 {
     u32 i;
-    printk("Invoking device_release(%p,%p)\n", inode, file);
+    printk("MSG SLOT: Invoking device_release(%p,%p)\n", inode, file);
     if (device_msg_channels == NULL) {
         return SUCCESS;
     }
@@ -49,21 +49,26 @@ static ssize_t device_read( struct file* file,
                             size_t       length,
                             loff_t*      offset )
 {
+    printk("MSG SLOT: Invoking device_read\n");
     if (current_msg_channel == NULL) {
+        pr_err("MSG SLOT: current_msg_channel == NULL\n");
         // errno = EINVAL;
-        return -2;
+        return -1;
     }
     if (!current_msg_channel->num_of_used_bytes) {
+        pr_err("MSG SLOT: !current_msg_channel->num_of_used_bytes\n");
         // errno = EWOULDBLOCK;
-        return -2;
+        return -1;
     }
     if (current_msg_channel->num_of_used_bytes > length) {
+        pr_err("MSG SLOT: current_msg_channel->num_of_used_bytes > length\n");
         // errno = ENOSPC;
-        return -2;
+        return -1;
     }
     if (copy_to_user(buffer, current_msg_channel->msg, current_msg_channel->num_of_used_bytes)) {
+        pr_err("MSG SLOT: Failed to copy from user\n");
         // errno = EFAULT;
-        return -2;
+        return -1;
     }
     return current_msg_channel->num_of_used_bytes;
 }
@@ -76,7 +81,7 @@ static ssize_t device_write( struct file*       file,
 {
     ssize_t i;
     int ret;
-    printk("Invoking device_write(%p ,%ld)\n", file, length);
+    printk("MSG SLOT: Invoking device_write(%p ,%ld)\n", file, length);
     if (device_msg_channels == NULL) {
         // errno = EINVAL;
         return -1;
@@ -92,7 +97,7 @@ static ssize_t device_write( struct file*       file,
             return -1;
         }
     }
-    printk("Successfully wrote %ld bytes to device\n", i);
+    printk("MSG SLOT: Successfully wrote %ld bytes to device\n", i);
     // return the number of input characters succeeded
     return i;
 }
@@ -115,13 +120,13 @@ static msg_channel_t* create_channel_if_needed_of(u64 requested_msg_channel_id) 
         // set device_msg_channels to be an array of pointers. device_msg_channels[0] will be our current msg slot
         device_msg_channels = kzalloc(sizeof(msg_channel_t*), GFP_KERNEL);
         if (device_msg_channels == NULL) {
-            pr_err("kzalloc failed.\n");
+            pr_err("MSG SLOT: kzalloc failed.\n");
             return NULL;
         }
         device_msg_channels[0] = kzalloc(sizeof(msg_channel_t), GFP_KERNEL);
         if (device_msg_channels[0] == NULL) {
             kfree(device_msg_channels);
-            pr_err("kzalloc failed.\n");
+            pr_err("MSG SLOT: kzalloc failed.\n");
             return NULL;
         }
         device_msg_channels[0]->id = requested_msg_channel_id;
@@ -138,14 +143,14 @@ static msg_channel_t* create_channel_if_needed_of(u64 requested_msg_channel_id) 
     num_of_msg_channels++;
     device_msg_channels = krealloc(device_msg_channels, num_of_msg_channels * sizeof(msg_channel_t*), GFP_KERNEL);
     if (device_msg_channels == NULL) {
-        pr_err("realloc failed.\n");
+        pr_err("MSG SLOT: realloc failed.\n");
         num_of_msg_channels--;
         return NULL;
     }
     device_msg_channels[num_of_msg_channels - 1] = kzalloc(sizeof(msg_channel_t), GFP_KERNEL);
     if (device_msg_channels[num_of_msg_channels - 1] == NULL) {
         num_of_msg_channels--;
-        pr_err("kzalloc failed.\n");
+        pr_err("MSG SLOT: kzalloc failed.\n");
         return NULL;
     }
     device_msg_channels[num_of_msg_channels - 1]->id = requested_msg_channel_id;
@@ -162,7 +167,7 @@ static long device_ioctl( struct   file* file,
         return -1;
     }
     // Get the parameter given to ioctl by the process
-    printk("Invoking ioctl: %ld\n", ioctl_param);
+    printk("MSG SLOT: Invoking ioctl(%ld)\n", ioctl_param);
     current_msg_channel = create_channel_if_needed_of(ioctl_param);
     return current_msg_channel != NULL ? SUCCESS : FAIL;
 }
@@ -193,7 +198,7 @@ static int __init simple_init(void)
         printk(KERN_ALERT "%s registraion failed for  %d\n", DEVICE_FILE_NAME, MAJOR_NUM);
         return rc;
     }
-    printk("registration worked!\n");
+    printk("MSG SLOT: registration worked!\n");
     return 0;
 }
 
