@@ -19,10 +19,7 @@ static msg_channel_t* current_msg_channel;      // the pointer to our current ms
 static int device_open( struct inode* inode,
                         struct file*  file )
 {
-     printk("MSG SLOT: Invoking device_open(%p)\n", file);
-    device_msg_channels = NULL;
-    num_of_msg_channels = 0;
-    current_msg_channel = NULL;
+    printk("MSG SLOT: Invoking device_open(%p)\n", file);
     return SUCCESS;
 }
 
@@ -98,7 +95,7 @@ static ssize_t device_write( struct file*       file,
         }
     }
     current_msg_channel->num_of_used_bytes = i;
-    printk("MSG SLOT: Successfully wrote %c bytes to device.\n", current_msg_channel->num_of_used_bytes);
+    printk("MSG SLOT: Successfully wrote %u bytes to device.\n", current_msg_channel->num_of_used_bytes);
     // return the number of input characters succeeded
     return i;
 }

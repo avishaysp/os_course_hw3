@@ -17,7 +17,7 @@
 
     typedef struct msg_channel_t {
         unsigned long id;  // we will go with 64 bits beacuse ioctl get a long as a param. Doesn't cost much relative to the 128 chars of the msg
-        char num_of_used_bytes;
+        unsigned int num_of_used_bytes;
         char msg[BUF_LEN];
     }msg_channel_t;
 
