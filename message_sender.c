@@ -1,5 +1,6 @@
 #include "message_slot.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <stdint.h>
 #include <fcntl.h>
@@ -11,7 +12,7 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 4) {
-        printf("Invalid Number of arguments for message_sender.c: %d instead of 3");
+        printf("Invalid Number of arguments for message_sender.c: %d instead of 3", argc);
         exit(1);
     }
     // Parse args
@@ -29,7 +30,7 @@ int main(int argc, char *argv[]) {
         perror("device ioctl failure");
         exit(1);
     }
-    ret = write(fd, curr_msg, strlen(curr_msg) - 1, 0);
+    ret = write(fd, curr_msg, strlen(curr_msg) - 1);
         if (ret == -1) {
         perror("device write failure");
         exit(1);

@@ -1,3 +1,4 @@
+#define BUF_LEN 128
 
 #ifdef __KERNEL__
     #include <linux/kernel.h>   /* We're doing kernel work */
@@ -25,7 +26,6 @@
 #define MSG_SLOT_CHANNEL _IOW(MAJOR_NUM, 0, unsigned long)
 #define SUCCESS 0
 #define DEVICE_RANGE_NAME "msg_slot_dev"
-#define BUF_LEN 128
 #define DEVICE_FILE_NAME "simple_msg_slot_dev"
 #define MAJOR_NUM 235
 #define SUCCESS 0
