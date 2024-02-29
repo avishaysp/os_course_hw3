@@ -20,7 +20,8 @@ static int device_open( struct inode* inode,
                         struct file*  file )
 {
     printk("MSG SLOT: Invoking device_open(%p)\n", file);
-    printk("MSG SLOT: %u\n", current_msg_channel != NULL ? current_msg_channel->num_of_used_bytes : 0);
+    printk("MSG SLOT: current_msg_channel->num_of_used_bytes %u\n", current_msg_channel != NULL ? current_msg_channel->num_of_used_bytes : 0);
+    printk("MSG SLOT: num_of_msg_channels%u\n", num_of_msg_channels);
     return SUCCESS;
 }
 
@@ -29,7 +30,8 @@ static int device_release( struct inode* inode,
                            struct file*  file)
 {
     printk("MSG SLOT: Invoking device_release(%p,%p)\n", inode, file);
-    printk("MSG SLOT: %u\n", current_msg_channel != NULL ? current_msg_channel->num_of_used_bytes : 0);
+    printk("MSG SLOT: current_msg_channel->num_of_used_bytes %u\n", current_msg_channel != NULL ? current_msg_channel->num_of_used_bytes : 0);
+    printk("MSG SLOT: num_of_msg_channels%u\n", num_of_msg_channels);
     return SUCCESS;
 }
 
