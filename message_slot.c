@@ -27,7 +27,15 @@ static int device_open( struct inode* inode,
 static int device_release( struct inode* inode,
                            struct file*  file)
 {
+    // int i;
     printk("MSG SLOT: Invoking device_release(%p,%p)\n", inode, file);
+    // if (device_msg_channels == NULL) {
+    //     return SUCCESS;
+    // }
+    // for (i = 0; i < num_of_msg_channels; i++) {
+    //     kfree(device_msg_channels[i]);
+    // }
+    // kfree(device_msg_channels);
     return SUCCESS;
 }
 
