@@ -20,6 +20,7 @@ static int device_open( struct inode* inode,
                         struct file*  file )
 {
     printk("MSG SLOT: Invoking device_open(%p)\n", file);
+    printk("MSG SLOT: %u\n", current_msg_channel != NULL ? current_msg_channel->num_of_used_bytes : 0);
     return SUCCESS;
 }
 
@@ -27,15 +28,8 @@ static int device_open( struct inode* inode,
 static int device_release( struct inode* inode,
                            struct file*  file)
 {
-    // int i;
     printk("MSG SLOT: Invoking device_release(%p,%p)\n", inode, file);
-    // if (device_msg_channels == NULL) {
-    //     return SUCCESS;
-    // }
-    // for (i = 0; i < num_of_msg_channels; i++) {
-    //     kfree(device_msg_channels[i]);
-    // }
-    // kfree(device_msg_channels);
+    printk("MSG SLOT: %u\n", current_msg_channel != NULL ? current_msg_channel->num_of_used_bytes : 0);
     return SUCCESS;
 }
 
@@ -51,8 +45,9 @@ static ssize_t device_read( struct file* file,
         // errno = EINVAL;
         return -1;
     }
-    if (!current_msg_channel->num_of_used_bytes) {
-        pr_err("MSG SLOT: !current_msg_channel->num_of_used_bytes\n");
+    printk("MSG SLOT: current_msg_channel->id %lu", current_msg_channel->id);
+    if (current_msg_channel->num_of_used_bytes == 0) {
+        pr_err("MSG SLOT: current_msg_channel->num_of_used_bytes == 0\n");
         // errno = EWOULDBLOCK;
         return -1;
     }
@@ -94,26 +89,29 @@ static ssize_t device_write( struct file*       file,
         }
     }
     current_msg_channel->num_of_used_bytes = i;
-    printk("MSG SLOT: Successfully wrote %u bytes to device.\n", current_msg_channel->num_of_used_bytes);
+    printk("MSG SLOT: Successfully wrote %u bytes to channel %lu.\n", current_msg_channel->num_of_used_bytes, current_msg_channel->id);
     // return the number of input characters succeeded
     return i;
 }
 
-static msg_channel_t* msg_channel_of(u64 requested_msg_channel_id) {
+static msg_channel_t* msg_channel_of(unsigned long requested_msg_channel_id) {
     int i;
+    printk("MSG SLOT: Number of channels is %u.\n", num_of_msg_channels);
     for (i = 0; i < num_of_msg_channels; i++) {
         if (device_msg_channels[i]->id == requested_msg_channel_id) {
              // the requested msg channel exists, his index is i
             return device_msg_channels[i];
         }
     }
+    printk("MSG SLOT: Didn't find the requested channel.\n");
     return NULL;
 }
 
-static msg_channel_t* create_channel_if_needed_of(u64 requested_msg_channel_id) {
+static msg_channel_t* create_channel_if_needed_of(unsigned long requested_msg_channel_id) {
     msg_channel_t* found_msg_channel;
     // First case: it is our first ioctl
-    if (device_msg_channels == NULL) {
+    if (device_msg_channels == 0) {
+        printk("MSG SLOT: no previous channels.\n");
         // set device_msg_channels to be an array of pointers. device_msg_channels[0] will be our current msg slot
         device_msg_channels = kzalloc(sizeof(msg_channel_t*), GFP_KERNEL);
         if (device_msg_channels == NULL) {
@@ -127,11 +125,14 @@ static msg_channel_t* create_channel_if_needed_of(u64 requested_msg_channel_id) 
             return NULL;
         }
         device_msg_channels[0]->id = requested_msg_channel_id;
+        printk("MSG SLOT: Created one channel.\n");
         return device_msg_channels[0];
     }
     // We know that there where channels in use. Check if msg channel already exists
+    printk("MSG SLOT: We used channels in the past. Checking if we had the channel requested.\n");
     found_msg_channel = msg_channel_of(requested_msg_channel_id);
     if (found_msg_channel) {
+        printk("MSG SLOT: Found the requested channel.\n");
         return found_msg_channel;
     }
 
@@ -151,6 +152,7 @@ static msg_channel_t* create_channel_if_needed_of(u64 requested_msg_channel_id) 
         return NULL;
     }
     device_msg_channels[num_of_msg_channels - 1]->id = requested_msg_channel_id;
+    printk("MSG SLOT: Created the requested channel Number of channels: %u.\n", num_of_msg_channels);
     return device_msg_channels[num_of_msg_channels - 1];
 }
 
