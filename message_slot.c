@@ -44,24 +44,20 @@ static ssize_t device_read( struct file* file,
     printk("MSG SLOT: Invoking device_read\n");
     if (current_msg_channel == NULL) {
         pr_err("MSG SLOT: current_msg_channel == NULL\n");
-        // errno = EINVAL;  I wans't able to compile with errno in kernel mode
-        return -1;
+        return -EINVAL;
     }
     printk("MSG SLOT: current_msg_channel->id %lu", current_msg_channel->id);
     if (current_msg_channel->num_of_used_bytes == 0) {
         pr_err("MSG SLOT: current_msg_channel->num_of_used_bytes == 0\n");
-        // errno = EWOULDBLOCK;  I wans't able to compile with errno in kernel mode
-        return -1;
+        return -EWOULDBLOCK;
     }
     if (current_msg_channel->num_of_used_bytes > length) {
         pr_err("MSG SLOT: current_msg_channel->num_of_used_bytes > length\n");
-        // errno = ENOSPC;  I wans't able to compile with errno in kernel mode
-        return -1;
+        return -ENOSPC;
     }
     if (copy_to_user(buffer, current_msg_channel->msg, current_msg_channel->num_of_used_bytes)) {
         pr_err("MSG SLOT: Failed to copy from user\n");
-        // errno = EFAULT;  I wans't able to compile with errno in kernel mode
-        return -1;
+        return -EFAULT;
     }
     return current_msg_channel->num_of_used_bytes;
 }
@@ -76,18 +72,15 @@ static ssize_t device_write( struct file*       file,
     int ret;
     printk("MSG SLOT: Invoking device_write(%p ,%ld)\n", file, length);
     if (device_msg_channels == NULL) {
-        // errno = EINVAL;  I wans't able to compile with errno in kernel mode
-        return -1;
+        return -EINVAL;
     }
     if (!length || length > BUF_LEN) {
-        // errno = EMSGSIZE;  I wans't able to compile with errno in kernel mode
-        return -1;
+        return -EMSGSIZE;
     }
     for(i = 0; i < length; i++) {
         ret = get_user(current_msg_channel->msg[i], &buffer[i]);
         if(ret) {
-            // errno = -ret;  // Convert to a positive value  I wans't able to compile with errno in kernel mode
-            return -1;
+            return -ret;
         }
     }
     current_msg_channel->num_of_used_bytes = i;
@@ -165,8 +158,7 @@ static long device_ioctl( struct   file* file,
 {
     // Switch according to the ioctl called
     if(ioctl_command_id != MSG_SLOT_CHANNEL || !ioctl_param /* Cannot be 0 */) {
-        // errno = EINVAL;  I wans't able to compile with errno in kernel mode
-        return -1;
+        return -EINVAL;
     }
     // Get the parameter given to ioctl by the process
     printk("MSG SLOT: Invoking ioctl(%ld)\n", ioctl_param);
