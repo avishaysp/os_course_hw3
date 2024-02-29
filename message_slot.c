@@ -21,7 +21,7 @@ static int device_open( struct inode* inode,
 {
     printk("MSG SLOT: Invoking device_open(%p)\n", file);
     printk("MSG SLOT: current_msg_channel->num_of_used_bytes %u\n", current_msg_channel != NULL ? current_msg_channel->num_of_used_bytes : 0);
-    printk("MSG SLOT: num_of_msg_channels%u\n", num_of_msg_channels);
+    printk("MSG SLOT: num_of_msg_channels %u\n", num_of_msg_channels);
     return SUCCESS;
 }
 
@@ -31,7 +31,7 @@ static int device_release( struct inode* inode,
 {
     printk("MSG SLOT: Invoking device_release(%p,%p)\n", inode, file);
     printk("MSG SLOT: current_msg_channel->num_of_used_bytes %u\n", current_msg_channel != NULL ? current_msg_channel->num_of_used_bytes : 0);
-    printk("MSG SLOT: num_of_msg_channels%u\n", num_of_msg_channels);
+    printk("MSG SLOT: num_of_msg_channels %u\n", num_of_msg_channels);
     return SUCCESS;
 }
 
@@ -126,6 +126,7 @@ static msg_channel_t* create_channel_if_needed_of(unsigned long requested_msg_ch
             pr_err("MSG SLOT: kzalloc failed.\n");
             return NULL;
         }
+        num_of_msg_channels = 1;
         device_msg_channels[0]->id = requested_msg_channel_id;
         printk("MSG SLOT: Created one channel.\n");
         return device_msg_channels[0];
